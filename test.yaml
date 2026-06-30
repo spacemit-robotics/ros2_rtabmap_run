@@ -1,0 +1,40 @@
+## Copyright (C) 2026 SpacemiT (Hangzhou) Technology Co. Ltd.
+## SPDX-License-Identifier: Apache-2.0
+
+module: middleware/ros2/slam/rtabmap_run
+
+tests:
+  - name: rtabmap-rgbd-rosbag-slam
+    description: >-
+      Replays recorded RGB-D/TF/Odometry data through rgbd_slam.launch.py and
+      verifies RTAB-Map publishes a non-empty occupancy grid map and camera
+      point cloud output.
+    category: functional
+    scopes: [pr]
+    timeout_s: 180
+    workdir: sdk
+    requires:
+      commands: [bash, python3]
+      files:
+        - middleware/ros2/slam/rtabmap_run/tests/rgbd_test_data/metadata.yaml
+        - middleware/ros2/slam/rtabmap_run/tests/rgbd_test_data/rgbd_test_data_0.db3
+    artifacts:
+      - output/test/pr/middleware__ros2__slam__rtabmap_run/modules/middleware__ros2__slam__rtabmap_run/logs/rtabmap_rgbd_rosbag_slam.log
+    command: |
+      bash middleware/ros2/slam/rtabmap_run/tests/test_rtabmap_rgbd_rosbag_slam.sh
+
+  - name: rtabmap-rgbd-invalid-bag
+    description: >-
+      Starts rgbd_slam.launch.py with an empty invalid rosbag path and verifies
+      no map is produced, exercising the no-input error path with an explicit
+      timeout assertion.
+    category: functional
+    scopes: [pr]
+    timeout_s: 90
+    workdir: sdk
+    requires:
+      commands: [bash, python3]
+    artifacts:
+      - output/test/pr/middleware__ros2__slam__rtabmap_run/modules/middleware__ros2__slam__rtabmap_run/logs/rtabmap_rgbd_invalid_bag.log
+    command: |
+      bash middleware/ros2/slam/rtabmap_run/tests/test_rtabmap_rgbd_invalid_bag.sh
